@@ -8,6 +8,9 @@ import {
   PublicationType,
   ProfileId,
 } from "@lens-protocol/react-web";
+import ReactMarkdown from "react-markdown";
+import { MessageSquare, Repeat, Heart, Grab } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ProfileWrapper() {
   const { address } = useAccount();
@@ -23,10 +26,8 @@ function Profile({ address }) {
     },
   });
 
-  // State to store the profile ID once it's available
   const [profileId, setProfileId] = useState<ProfileId | any>(null);
 
-  // Update profileId state when profile data is loaded
   useEffect(() => {
     if (profileData && profileData.length > 0) {
       const profile = profileData[profileData.length - 1];
@@ -34,7 +35,6 @@ function Profile({ address }) {
     }
   }, [profileData]);
 
-  // Call usePublications hook with the profileId
   const {
     data: publications,
     loading,
@@ -49,11 +49,6 @@ function Profile({ address }) {
   if (!profileData || !profileData.length) return null;
   const profile = profileData[profileData.length - 1];
   if (!profile) return null;
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!publications || publications.length === 0)
-    return <div>No posts found.</div>;
 
   return (
     <main className="px-10 py-14">
@@ -83,9 +78,51 @@ function Profile({ address }) {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold">Posts</h2>
           <ul>
-            {publications.map((publication, idx) => (
-              <li key={`${publication.id}-${idx}`} className="mt-4">
-                <p>{(publication as any).metadata.content}</p>
+            {publications?.map((publication, idx) => (
+              <li
+                key={`${publication.id}-${idx}`}
+                className="py-4 mt-4 border-b"
+              >
+                <div>
+                  {publication.metadata?.asset?.image?.original?.url && (
+                    <img
+                      src={publication.metadata.asset.image.original.url}
+                      alt="Publication"
+                      className="max-w-full mb-4 rounded-lg"
+                    />
+                  )}
+                  <ReactMarkdown>{publication.metadata.content}</ReactMarkdown>
+                  <div className="flex mt-2 space-x-4">
+                    <Button
+                      className="flex items-center rounded-full"
+                      variant="secondary"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      {publication.stats.comments}
+                    </Button>
+                    <Button
+                      className="flex items-center rounded-full"
+                      variant="secondary"
+                    >
+                      <Repeat className="w-4 h-4 mr-2" />
+                      {(publication.stats.mirrors as any) || 0}
+                    </Button>
+                    <Button
+                      className="flex items-center rounded-full"
+                      variant="secondary"
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      {publication.stats.upvotes as any}
+                    </Button>
+                    <Button
+                      className="flex items-center rounded-full"
+                      variant="secondary"
+                    >
+                      <Grab className="w-4 h-4 mr-2" />
+                      {publication.stats.collects}
+                    </Button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
