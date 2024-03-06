@@ -3,13 +3,14 @@
 import {
   useProfile,
   usePublications,
-  Profile,
   LimitType,
   PublicationType,
   useLogin,
   useProfiles,
   useFollow,
 } from "@lens-protocol/react-web";
+import type { Profile } from "@lens-protocol/react-web";
+
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useAccount } from "wagmi";
 
