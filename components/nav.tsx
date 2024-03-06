@@ -13,12 +13,12 @@ import { useEffect, useState } from "react";
 export function Nav() {
   const { open } = useWeb3Modal();
   const { address } = useAccount();
-  if (!address) return null;
   const pathname = usePathname();
 
+  // Always call `useProfiles` at the top level
   const { data: profileData } = useProfiles({
     where: {
-      ownedBy: [address],
+      ownedBy: [address ? address : ""], // Ensure the argument is always provided, even if falsy
     },
   });
 
@@ -31,7 +31,10 @@ export function Nav() {
     }
   }, [profileData]);
 
+  // Early return conditions refactored to come after hook calls
+  if (!address) return null;
   if (!profileData || !profileData.length) return null;
+
   const profile = profileData[profileData.length - 1];
   if (!profile) return null;
 
