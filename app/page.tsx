@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ReactMarkdown from 'react-markdown'
+import Link from 'next/link'
 
 enum PublicationMetadataMainFocusType {
   Article = "ARTICLE",
@@ -77,10 +78,7 @@ export default function Home() {
   })
   
   return (
-    <main className="
-      px-6 py-14
-      sm:px-10
-    ">
+    <main className="px-6  py-14 sm:px-10">
       <div>
         <a target="_blank" rel="no-opener" href="https://lens.xyz">
         <div className="cursor-pointer flex items-center bg-secondary text-foreground rounded-lg py-1 px-3 mb-2 max-w-[288px]">
@@ -91,7 +89,7 @@ export default function Home() {
           <ArrowRight className='ml-2' size={14} />
         </div>
         </a>
-        <h1 className="text-5xl font-bold mt-3">
+        <h1 className="mt-3 text-5xl font-bold">
           Social Explorer
         </h1>
         <p className="mt-4 max-w-[750px] text-lg text-muted-foreground sm:text-xl">
@@ -128,63 +126,57 @@ export default function Home() {
       {
         dashboardType === 'dashboard' && (      <div className='md:flex min-h-[300px] mt-3'>
         <div className="border border rounded-tl rounded-bl md:w-[230px] pt-3 px-2 pb-8 flex-col flex">
-          <p className='font-medium ml-4 mb-2 mt-1'>Social Views</p>
+          <p className='mt-1 mb-2 ml-4 font-medium'>Social Views</p>
           <Button
             onClick={() => setView('profiles')}
            variant={view === 'profiles' ? 'secondary': 'ghost'} className="justify-start mb-1">
             <PersonStanding size={16} />
-            <p className="text-sm ml-2">Profiles</p>
+            <p className="ml-2 text-sm">Profiles</p>
           </Button>
           <Button
             onClick={() => setView('publications')}
             variant={view === 'publications' ? 'secondary': 'ghost'} className="justify-start mb-1">
             <Newspaper size={16} />
-            <p className="text-sm ml-2">Publications</p>
+            <p className="ml-2 text-sm">Publications</p>
           </Button>
           <Button
             onClick={() => setView('music')}
             variant={view === 'music' ? 'secondary': 'ghost'} 
             className="justify-start mb-1">
             <ListMusic size={16} />
-            <p className="text-sm ml-2">Music</p>
+            <p className="ml-2 text-sm">Music</p>
           </Button>
           <Button
             onClick={() => setView('collect')}
             variant={view === 'collect' ? 'secondary': 'ghost'} 
             className="justify-start mb-1">
             <Shapes size={16} />
-            <p className="text-sm ml-2">Collect</p>
+            <p className="ml-2 text-sm">Collect</p>
           </Button>
         </div>
         <div
-          className="
-          sm:border-t sm:border-r sm:border-b
-          rounded-tr rounded-br flex flex-1 pb-4">
+          className="flex flex-1 pb-4 rounded-tr rounded-br  sm:border-t sm:border-r sm:border-b">
           {
             view === 'profiles' && (
-              <div className="flex flex-1 flex-wrap p-4">
+              <div className="flex flex-wrap flex-1 p-4">
                 {
                   loadingProfiles && (
-                    <div className="
-                      flex flex-1 justify-center items-center
-                    ">
-                      <Loader2 className="h-12 w-12 animate-spin" />
+                    <div className="flex items-center justify-center flex-1 ">
+                      <Loader2 className="w-12 h-12 animate-spin" />
                     </div>
                   )
                 }
                 {
                   profiles?.map(profile => (
-                    <a
-                      key={profile.id}
-                      className="
-                      lg:w-1/4 sm:w-1/2 p-4 cursor-pointer"
-                      rel="no-opener"
-                      target="_blank"
-                      href={`https://share.lens.xyz/u/${profile.handle.namespace}/${profile.handle.localName}`}>
+                    <Link
+                    href={`/profile/${profile.handle?.localName}.${profile.handle?.namespace}`}
+                    key={profile.id}
+                  >
+        >
                       <div className="space-y-3">
                           <div className="overflow-hidden rounded-md">
                             <img
-                              className="h-auto w-auto object-cover transition-all hover:scale-105 aspect-square"
+                              className="object-cover w-auto h-auto transition-all hover:scale-105 aspect-square"
                               src={profile.metadata?.picture?.optimized?.uri
                             } />
                           </div>
@@ -193,7 +185,7 @@ export default function Home() {
                             <p className="text-xs text-muted-foreground">{profile.metadata?.displayName}</p>
                           </div>
                       </div>
-                    </a>
+                    </Link>
                   ))
                 }
               </div>
@@ -201,13 +193,11 @@ export default function Home() {
           }
           {
             view === 'publications' && (
-              <div className="flex flex-1 flex-wrap flex-col">
+              <div className="flex flex-col flex-wrap flex-1">
                 {
                   loadingPubs && (
-                    <div className="
-                      flex flex-1 justify-center items-center
-                    ">
-                      <Loader2 className="h-12 w-12 animate-spin" />
+                    <div className="flex items-center justify-center flex-1 ">
+                      <Loader2 className="w-12 h-12 animate-spin" />
                     </div>
                   )
                 }
@@ -219,10 +209,7 @@ export default function Home() {
                       onClick={() => window.open(`https://share.lens.xyz/p/${publication.id}`, '_blank')}
                     >
                       <div
-                      className="
-                      space-y-3 mb-4 pt-6 pb-2
-                      sm:px-6 px-2
-                      ">
+                      className="px-2 pt-6 pb-2 mb-4 space-y-3  sm:px-6">
                         <div className="flex">
                           <Avatar>
                             <AvatarImage src={publication.by?.metadata?.picture?.optimized?.uri} />
@@ -241,27 +228,25 @@ export default function Home() {
                             `)}
                             src={publication.__typename === 'Post' ? publication.metadata?.asset?.image?.optimized?.uri : ''}
                           />
-                          <ReactMarkdown className="
-                          mt-4 break-words
-                          ">
+                          <ReactMarkdown className="mt-4 break-words ">
                             {publication.metadata.content.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, '[LINK]($1)')}
                           </ReactMarkdown>
                         </div>
                         <div>
-                          <Button className="rounded-full mr-1"  variant="secondary" >
-                            <MessageSquare className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full"  variant="secondary" >
+                            <MessageSquare className="w-4 h-4 mr-2" />
                             {publication.stats.comments}
                           </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Repeat2 className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full" variant="secondary">
+                            <Repeat2 className="w-4 h-4 mr-2" />
                             {publication.stats.mirrors}
                           </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Heart className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full" variant="secondary">
+                            <Heart className="w-4 h-4 mr-2" />
                             {publication.stats.upvotes}
                           </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Grab className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full" variant="secondary">
+                            <Grab className="w-4 h-4 mr-2" />
                             {publication.stats.collects}
                           </Button>
                         </div>
@@ -274,13 +259,11 @@ export default function Home() {
           }
           {
             view === 'music' && (
-              <div className="flex flex-1 flex-wrap flex-col">
+              <div className="flex flex-col flex-wrap flex-1">
                 {
                   loadingMusicPubs && (
-                    <div className="
-                      flex flex-1 justify-center items-center
-                    ">
-                      <Loader2 className="h-12 w-12 animate-spin" />
+                    <div className="flex items-center justify-center flex-1 ">
+                      <Loader2 className="w-12 h-12 animate-spin" />
                     </div>
                   )
                 }
@@ -291,7 +274,7 @@ export default function Home() {
                       key={publication.id}
                       onClick={() => window.open(`https://share.lens.xyz/p/${publication.id}`, '_blank')}
                     >
-                      <div className="space-y-3 mb-4 p-4">
+                      <div className="p-4 mb-4 space-y-3">
                         <div className="flex">
                           <Avatar>
                             <AvatarImage src={publication.by?.metadata?.picture?.optimized?.uri} />
@@ -319,27 +302,25 @@ export default function Home() {
                               src={publication.metadata?.asset?.audio?.optimized?.uri}
                             />
                           </audio>
-                          <ReactMarkdown className="
-                          mt-4 break-words
-                          ">
+                          <ReactMarkdown className="mt-4 break-words ">
                             {publication.metadata.content.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, '[LINK]($1)')}
                           </ReactMarkdown>
                         </div>
                         <div>
-                          <Button className="rounded-full mr-1"  variant="secondary" >
-                            <MessageSquare className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full"  variant="secondary" >
+                            <MessageSquare className="w-4 h-4 mr-2" />
                             {publication.stats.comments}
                           </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Repeat2 className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full" variant="secondary">
+                            <Repeat2 className="w-4 h-4 mr-2" />
                             {publication.stats.mirrors}
                           </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Heart className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full" variant="secondary">
+                            <Heart className="w-4 h-4 mr-2" />
                             {publication.stats.upvotes}
                           </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Grab className="mr-2 h-4 w-4" />
+                          <Button className="mr-1 rounded-full" variant="secondary">
+                            <Grab className="w-4 h-4 mr-2" />
                             {publication.stats.collects}
                           </Button>
                         </div>
