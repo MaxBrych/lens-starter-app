@@ -1,5 +1,6 @@
 // app/profile/[handle]/page.tsx
 "use client";
+import { Button } from "@/components/ui/button";
 import {
   useProfile,
   usePublications,
@@ -12,6 +13,7 @@ import {
 import type { Profile } from "@lens-protocol/react-web";
 
 import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { MessageSquare, Repeat2 } from "lucide-react";
 import { useAccount } from "wagmi";
 
 export default function Profile({ params: { handle } }) {

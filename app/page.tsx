@@ -180,6 +180,7 @@ export default function Home() {
                 )}
                 {profiles?.map((profile) => (
                   <Link
+                    className="p-4 cursor-pointer  lg:w-1/4 sm:w-1/2"
                     href={`/profile/${profile.handle?.localName}.${profile.handle?.namespace}`}
                     key={profile.id}
                   >
