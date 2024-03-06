@@ -1,11 +1,17 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
-import { ThemeProvider } from "@/app/theme-provider"
-import { LensProvider } from '@/app/lens-provider'
-import { Web3ModalProvider } from '@/app/web3modal-provider'
-import { Nav } from '@/components/nav'
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/app/theme-provider";
+import { LensProvider } from "@/app/lens-provider";
+import { Web3ModalProvider } from "@/app/web3modal-provider";
+import { Nav } from "@/components/nav";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Lens Blog",
+  description: "Blogging on the Lens Protocol",
+};
 
 export default function Layout({ children }) {
   return (
@@ -21,6 +27,5 @@ export default function Layout({ children }) {
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
-
