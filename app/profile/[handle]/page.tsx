@@ -13,7 +13,7 @@ import {
 import type { Profile } from "@lens-protocol/react-web";
 
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { MessageSquare, Repeat2 } from "lucide-react";
+import { Grab, Heart, MessageSquare, Repeat2 } from "lucide-react";
 import { useAccount } from "wagmi";
 
 export default function Profile({ params: { handle } }) {
@@ -109,6 +109,25 @@ function Publications({ profile }: { profile: Profile }) {
               src={pub.metadata?.asset?.image?.optimized?.uri}
             />
           )}
+          <div className="mt-4">
+            <Button className="mr-1 rounded-full" variant="secondary">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              {pub.stats.comments}
+            </Button>
+            <Button className="mr-1 rounded-full" variant="secondary">
+              <Repeat2 className="w-4 h-4 mr-2" />
+              {pub.stats.mirrors}
+            </Button>
+
+            <Button className="mr-1 rounded-full" variant="secondary">
+              <Heart className="w-4 h-4 mr-2" />
+              {pub.stats.upvotes}
+            </Button>
+            <Button className="mr-1 rounded-full" variant="secondary">
+              <Grab className="w-4 h-4 mr-2" />
+              {pub.stats.collects}
+            </Button>
+          </div>
         </div>
       ))}
     </>
