@@ -31,19 +31,18 @@ export function Nav() {
     }
   }, [profileData]);
 
-  // Early return conditions refactored to come after hook calls
-  if (!address) return null;
-  if (!profileData || !profileData.length) return null;
-
-  const profile = profileData[profileData.length - 1];
-  if (!profile) return null;
+  // Determine the last profile for use in the profile link. Avoid using early return.
+  const lastProfile =
+    profileData && profileData.length > 0
+      ? profileData[profileData.length - 1]
+      : null;
 
   return (
     <nav className="flex flex-col items-start border-b sm:flex-row sm:items-center sm:pr-10">
-      <div className="flex items-center flex-1 px-8 py-3 p">
+      <div className="flex items-center flex-1 px-8 py-3">
         <Link href="/" className="flex items-center mr-5">
           <Droplets className="opacity-85" size={19} />
-          <p className={`ml-2 mr-4 text-lg font-semibold`}>lenscn</p>
+          <p className="ml-2 mr-4 text-lg font-semibold">lenscn</p>
         </Link>
         <Link
           href="/"
@@ -57,11 +56,13 @@ export function Nav() {
         >
           <p>Search</p>
         </Link>
-        {address && (
+        {lastProfile && (
           <Link
-            href={`/profile/${profile.handle?.localName}.${profile.handle?.namespace}`}
+            href={`/profile/${lastProfile.handle?.localName}.${lastProfile.handle?.namespace}`}
             className={`mr-5 text-sm ${
-              pathname !== "/profile" && "opacity-60"
+              pathname !==
+                `/profile/${lastProfile.handle?.localName}.${lastProfile.handle?.namespace}` &&
+              "opacity-60"
             }`}
           >
             <p>Profile</p>
@@ -69,13 +70,12 @@ export function Nav() {
         )}
       </div>
       <div className="flex pb-3 pl-8 sm:items-center sm:p-0">
-        {!address && (
+        {!address ? (
           <Button onClick={() => open()} variant="secondary" className="mr-4">
             Connect Wallet
             <ChevronRight className="w-4 h-4" />
           </Button>
-        )}
-        {address && (
+        ) : (
           <Button onClick={disconnect} variant="secondary" className="mr-4">
             Disconnect
             <LogOut className="w-4 h-4 ml-3" />
