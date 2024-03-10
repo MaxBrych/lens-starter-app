@@ -3,108 +3,69 @@ import { useState, useEffect } from "react";
 import { useCreatePost, useLogin, useProfiles } from "@lens-protocol/react-web";
 import { textOnly } from "@lens-protocol/metadata";
 import { useAccount } from "wagmi";
+import { storage } from "../../lib/utils";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 const CreatePostComponent = () => {
+  const [postContent, setPostContent] = useState("");
+  const {
+    execute,
+    error: createPostError,
+    loading: createPostLoading,
+  } = useCreatePost();
+  const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
   const { execute: login, data } = useLogin();
-
-
   const { data: ownedProfiles } = useProfiles({
     where: {
       ownedBy: [address || ""],
     },
   });
 
-  const {
-    data: profilesData,
-    loading: profilesLoading,
-    error: profilesError,
-  } = useProfiles({
-    where: { ownedBy: [address] },
-  });
-
-  // Assuming the first profile is the active one
-  const activeProfile = profilesData?.[0];
-
-
-
-
-  const post = (content: string) => {
-    // Post creation logic
-  const {
-    execute,
-    error: createPostError,
-    loading: createPostLoading,
-  } = useCreatePost();
-  const [postContent, setPostContent] = useState("");
-
-
-    // create the desired metadata via the `@lens-protocol/metadata` package helpers
-    const metadata = textOnly({ content });
-  
-    // upload the metadata to a storage provider of your choice (IPFS in this example)
-    const uri = await uploadToIpfs(metadata);
-
-    // invoke the `execute` function to create the post
-  const result = await execute({
-    metadata: uri,
-  });
-
-  if (result.isFailure()) {
-    switch (result.error.name) {
-      case 'BroadcastingError':
-        console.log('There was an error broadcasting the transaction', error.message);
-        break;
-
-      case 'PendingSigningRequestError':
-        console.log(
-          'There is a pending signing request in your wallet. ' +
-            'Approve it or discard it and try again.'
-        );
-        break;
-
-      case 'WalletConnectionError':
-        console.log('There was an error connecting to your wallet', error.message);
-        break;
-
-      case 'UserRejectedError':
-        // the user decided to not sign, usually this is silently ignored by UIs
-        break;
+  // Upload metadata to IPFS using ThirdwebStorage
+  const uploadToIpfs = async (metadata) => {
+    try {
+      const uri = await storage.upload(metadata);
+      return uri;
+    } catch (error) {
+      console.error("Error uploading to IPFS:", error);
+      return null;
     }
-    return;
-  }
-  // this might take a while, depends on the type of tx (on-chain or Momoka)
-  // and the congestion of the network
-  const completion = await result.value.waitForCompletion();
-
-  if (completion.isFailure()) {
-    console.log('There was an processing the transaction', completion.error.message);
-    return;
-  }
-
-  const handlePostContentChange = (event) => {
-    setPostContent(event.target.value);
   };
 
-  // the post is now ready to be used
-  const post = completion.value;
-  console.log('Post created', post);
-};
-  }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!postContent.trim()) return;
 
-  useEffect(() => {
-    if (!address) {
-      console.log("Wallet not connected");
+    // create the desired metadata via the `@lens-protocol/metadata` package helpers
+    const metadata = textOnly({ content: postContent });
+    const uri = await uploadToIpfs(metadata);
+    if (!uri) {
+      console.error("Failed to upload metadata to IPFS.");
+      return;
     }
-  }, [address]);
 
- 
+    // invoke the `execute` function to create the post
+    const result = await execute({
+      metadata: uri,
+    });
 
- 
+    if (result.isFailure()) {
+      console.error("Failed to create post:", result.error.message);
+      return;
+    }
 
-  if (profilesLoading) return <div>Loading profile...</div>;
-  if (profilesError)
-    return <div>Error loading profile: {profilesError.message}</div>;
+    const completion = await result.value.waitForCompletion();
+    if (completion.isFailure()) {
+      console.error(
+        "Error processing the transaction:",
+        completion.error.message
+      );
+      return;
+    }
+
+    console.log("Post created", completion.value);
+  };
 
   return (
     <div>
@@ -132,21 +93,16 @@ const CreatePostComponent = () => {
       <h1>Create a Post</h1>
       <form onSubmit={handleSubmit}>
         <input
-        placeholder="What's on your mind?"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        required
-        ></input>
-        
-        <button
-          type="submit"
-          disabled={createPostLoading || !postContent.trim()}
-        >
+          placeholder="What's on your mind?"
+          value={postContent}
+          onChange={(e) => setPostContent(e.target.value)}
+          required
+        />
+        <button type="submit" disabled={createPostLoading}>
           {createPostLoading ? "Creating..." : "Create Post"}
         </button>
       </form>
       {createPostError && <div>Error: {createPostError.message}</div>}
-      {postResult && <div>Post created successfully!</div>}
     </div>
   );
 };
