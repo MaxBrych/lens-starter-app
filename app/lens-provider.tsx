@@ -10,7 +10,7 @@ import { bindings as wagmiBindings } from "@lens-protocol/wagmi";
 
 const lensConfig: LensConfig = {
   bindings: wagmiBindings(),
-  environment: production,
+  environment: development,
 };
 
 export function LensProvider({ children }: { children: React.ReactNode }) {

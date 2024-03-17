@@ -10,6 +10,8 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@irys/sdk": "^0.1.16",
+    "@lens-protocol/client": "^2.0.0-alpha.35",
     "@lens-protocol/metadata": "^1.0.5",
     "@lens-protocol/react-web": "^2.0.0-alpha.19",
     "@lens-protocol/wagmi": "^3.0.0-alpha.22",
@@ -25,6 +27,7 @@
     "autoprefixer": "10.4.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "dotenv": "^16.4.5",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.17",
     "ethers": "^5.7.2",
