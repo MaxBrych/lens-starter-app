@@ -98,7 +98,11 @@ function Publications({ profile }: { profile: Profile }) {
   return (
     <>
       {publications?.map((pub: any, index: number) => (
-        <div key={index} className="px-4 py-4 mb-3 rounded bg-zinc-900">
+        <a
+          href={`https://testnet.hey.xyz/posts/${pub.id}`}
+          key={index}
+          className="flex flex-col px-4 py-4 mb-3 rounded bg-zinc-900"
+        >
           <p>{pub.metadata.content}</p>
           {pub.metadata?.asset?.image?.optimized?.uri && (
             <img
@@ -128,7 +132,7 @@ function Publications({ profile }: { profile: Profile }) {
               {pub.stats.collects}
             </Button>
           </div>
-        </div>
+        </a>
       ))}
     </>
   );

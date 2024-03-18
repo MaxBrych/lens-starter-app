@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useCreatePost, useLogin, useProfiles } from "@lens-protocol/react-web";
 import { textOnly } from "@lens-protocol/metadata";
 import { useAccount } from "wagmi";
-import { storage } from "../../lib/utils";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
+// Import Irys
+import Irys from "@irys/sdk";
 
 const CreatePostComponent = () => {
   const [postContent, setPostContent] = useState("");
@@ -17,18 +18,33 @@ const CreatePostComponent = () => {
   const { address, isConnected } = useAccount();
   const { execute: login, data } = useLogin();
   const { data: ownedProfiles } = useProfiles({
-    where: {
-      ownedBy: [address || ""],
-    },
+    where: { ownedBy: [address || ""] },
   });
 
-  // Upload metadata to IPFS using ThirdwebStorage
-  const uploadToIpfs = async (metadata) => {
+  // Initialize Irys for Arweave data upload
+  const getIrys = async () => {
+    const url = "https://devnet.irys.xyz";
+    // Ensure to replace this with your actual environment variable or secure key handling method
+    const privateKey = process.env.IRYS_KEY;
+    const token = "arweave"; // Use "arweave" for Arweave payments
+
+    const irys = new Irys({
+      url,
+      token,
+      key: privateKey,
+    });
+
+    return irys;
+  };
+
+  // Upload data to Arweave using Irys
+  const uploadToArweave = async (data) => {
     try {
-      const uri = await storage.upload(metadata);
-      return uri;
+      const irys = await getIrys();
+      const receipt = await irys.upload(data);
+      return `https://gateway.irys.xyz/${receipt.id}`;
     } catch (error) {
-      console.error("Error uploading to IPFS:", error);
+      console.error("Error uploading to Arweave via Irys:", error);
       return null;
     }
   };
@@ -37,18 +53,14 @@ const CreatePostComponent = () => {
     event.preventDefault();
     if (!postContent.trim()) return;
 
-    // create the desired metadata via the `@lens-protocol/metadata` package helpers
     const metadata = textOnly({ content: postContent });
-    const uri = await uploadToIpfs(metadata);
+    const uri = await uploadToArweave(JSON.stringify(metadata));
     if (!uri) {
-      console.error("Failed to upload metadata to IPFS.");
+      console.error("Failed to upload metadata to Arweave.");
       return;
     }
 
-    // invoke the `execute` function to create the post
-    const result = await execute({
-      metadata: uri,
-    });
+    const result = await execute({ metadata: uri });
 
     if (result.isFailure()) {
       console.error("Failed to create post:", result.error.message);
@@ -70,22 +82,19 @@ const CreatePostComponent = () => {
   return (
     <div>
       {!isConnected && (
-        <button
-          className="px-4 py-2 mt-4 mb-6 border rounded border-zinc-600"
-          onClick={() => open()}
-        >
+        <button onClick={() => open()} className="button">
           Connect Wallet
         </button>
       )}
       {!data && ownedProfiles?.length && isConnected && (
         <button
-          className="px-4 py-2 mt-4 mb-6 border rounded border-zinc-600"
           onClick={() =>
             login({
               address: address || "",
               profileId: ownedProfiles[ownedProfiles.length - 1].id,
             })
           }
+          className="button"
         >
           Login with Lens
         </button>
@@ -93,9 +102,9 @@ const CreatePostComponent = () => {
       <h1>Create a Post</h1>
       <form onSubmit={handleSubmit}>
         <input
-          placeholder="What's on your mind?"
           value={postContent}
           onChange={(e) => setPostContent(e.target.value)}
+          placeholder="What's on your mind?"
           required
         />
         <button type="submit" disabled={createPostLoading}>
