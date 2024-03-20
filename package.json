@@ -13,7 +13,7 @@
     "@irys/sdk": "^0.1.16",
     "@lens-protocol/client": "^2.0.0-alpha.35",
     "@lens-protocol/metadata": "^1.0.5",
-    "@lens-protocol/react-web": "^2.0.0-alpha.19",
+    "@lens-protocol/react-web": "^2.0.0-alpha.36",
     "@lens-protocol/wagmi": "^3.0.0-alpha.22",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
