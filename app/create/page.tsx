@@ -24,9 +24,8 @@ const CreatePostComponent = () => {
   // Initialize Irys for Arweave data upload
   const getIrys = async () => {
     const url = "https://devnet.irys.xyz";
-    // Ensure to replace this with your actual environment variable or secure key handling method
     const privateKey = process.env.IRYS_KEY;
-    const token = "arweave"; // Use "arweave" for Arweave payments
+    const token = "matic";
 
     const irys = new Irys({
       url,
