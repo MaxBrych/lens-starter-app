@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 // Import Irys
 import Irys from "@irys/sdk";
+import GaslessUploader from "@/components/GasslessUploader";
 
 const CreatePostComponent = () => {
   const [postContent, setPostContent] = useState("");
@@ -99,6 +100,7 @@ const CreatePostComponent = () => {
         </button>
       )}
       <h1>Create a Post</h1>
+      <GaslessUploader />
       <form onSubmit={handleSubmit}>
         <input
           value={postContent}
