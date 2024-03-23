@@ -38,7 +38,9 @@ const JSONNode: React.FC<JSONNodeProps> = ({ keyName, data, depth }) => {
     <div className={`pl-${depth * 4} py-1`}>
       <span className="text-blue-600">{keyName}:</span>
       {typeof data === "string" && (
-        <span className="ml-2 text-green-600">"{truncateValue(data)}"</span>
+        <span className="ml-2 text-green-600">
+          &quot;{truncateValue(data)}&quot;
+        </span>
       )}
       {typeof data === "number" && (
         <span className="ml-2 text-purple-600">{data}</span>
