@@ -1,11 +1,11 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useAccount } from "wagmi";
 import { disconnect } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { ModeToggle } from "@/components/dropdown";
+import { ModeToggle } from "./dropdown";
 import { ChevronRight, Droplets, LogOut } from "lucide-react";
 import { useProfiles, ProfileId } from "@lens-protocol/react-web";
 import { useEffect, useState } from "react";

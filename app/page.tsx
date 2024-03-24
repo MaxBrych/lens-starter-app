@@ -21,9 +21,9 @@ import {
   Grab,
   ArrowRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./components/ui/button";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 
